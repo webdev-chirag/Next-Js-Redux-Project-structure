@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Next.js User Management Boilerplate
 
-## Getting Started
+A scalable **Next.js 15+** project structure using **App Router**, **Redux Toolkit**, **Tailwind CSS**, **React Hook Form**, and **Yup**. Built with best practices for modular, maintainable frontend development.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📁 Project Directory Structure
+
+### `app/` — Next.js App Router Pages
+
+```
+app/
+└── users/
+    ├── page.tsx                    # User list route → renders <UserListPage />
+    ├── create/
+    │   └── page.tsx                # User creation route → renders <UserCreatePage />
+    └── [id]/
+        └── edit/
+            └── page.tsx            # Dynamic edit route → renders <UserEditPage />
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### `features/user/` — Feature-specific Logic
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+features/
+└── user/
+    ├── services/
+    │   └── userService.ts          # API interaction using axios or webApiCaller
+    ├── components/
+    │   └── UserForm.tsx            # Controlled form component reused for Create/Edit
+    ├── hooks/
+    │   └── useUserForm.ts          # Custom hook for form state and fetching countries/states
+    ├── pages/
+    │   ├── UserListPage.tsx        # Container component for listing users
+    │   ├── UserCreatePage.tsx      # Container for user creation
+    │   └── UserEditPage.tsx        # Container for user editing
+    ├── userSlice.ts                # Redux slice with async thunks for user state management
+    └── types.ts                    # TypeScript interfaces/types (e.g. `User`, `Country`, etc.)
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### `lib/` — Core Config & Providers
 
-## Learn More
+```
+lib/
+├── axios.ts                        # Axios instance with base URL and interceptors
+└── providers.ts                    # Next.js providers (Redux Provider, Toaster, etc.)
+```
 
-To learn more about Next.js, take a look at the following resources:
+### `redux/` — Redux Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+redux/
+├── store.ts                        # Redux store configuration
+├── rootReducer.ts                  # Combines all feature reducers (if needed manually)
+└── hooks.ts                        # Typed `useAppDispatch` and `useAppSelector` hooks
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### `utils/` — Utility Functions
 
-## Deploy on Vercel
+```
+utils/
+└── webApiCaller.ts                 # Wrapper around axios with extra error handling (optional)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### `validation/` — Schema Validation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+validation/
+└── userSchema.ts                   # Yup schema for user form validation (create/edit)
+```
+
+---
+
+## 📦 Installed Packages
+
+```
+"@hookform/resolvers"      // Integrates Yup with React Hook Form
+"@reduxjs/toolkit"         // State management
+"axios"                    // API requests
+"react-hook-form"          // Lightweight form management
+"react-hot-toast"          // Toast notifications
+"react-redux"              // React bindings for Redux
+"yup"                      // Schema-based form validation
+```
+
+---
+
+## 🛠️ Project Configuration Choices
+
+```
+√ TypeScript:                 Yes
+√ ESLint:                     Yes
+√ Tailwind CSS:               Yes
+√ Use src/ directory:         No
+√ App Router:                 Yes (recommended)
+√ Turbopack for `next dev`:   Yes
+√ Customize import alias:     No (default is `@/*`)
+```
+
+---
+
+## 📄 License
+
+MIT
+
+## ChatGPT Chat Link
+
+[Click here to view the shared ChatGPT conversation](https://chatgpt.com/share/68939bed-f4ec-800d-9736-68279d6abc90)
