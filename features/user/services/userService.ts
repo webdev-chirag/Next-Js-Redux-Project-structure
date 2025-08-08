@@ -13,3 +13,7 @@ export const updateUser = (id: number, data: any) =>
 
 export const deleteUser = (id: number) =>
   webApiCaller('DELETE', `/users/${id}`, true)
+
+export const getUserById = (id: number) =>
+  webApiCaller('GET', `/users/${id}`, true)
+

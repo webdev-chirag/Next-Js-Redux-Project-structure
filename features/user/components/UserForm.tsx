@@ -1,52 +1,72 @@
 // features/user/components/UserForm.tsx
-import React from 'react'
+import React from 'react';
+
+type UserFormProps = {
+  register: any;
+  errors: any;
+  countries: any[];
+  states: any[];
+  onSubmit: (e?: React.BaseSyntheticEvent) => void;
+  isSubmitting: boolean;
+};
 
 export default function UserForm({
-  form,
-  setForm,
+  register,
+  errors,
   countries,
   states,
-  handleSubmit,
-  resetForm,
-}: any) {
+  onSubmit,
+  isSubmitting,
+}: UserFormProps) {
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
+      {/* Name */}
       <input
+        {...register('name')}
         placeholder="Name"
-        value={form.name}
-        onChange={(e) => setForm({ ...form, name: e.target.value })}
       />
+      {errors.name && (
+        <p className="text-red-500 text-sm">{errors.name.message}</p>
+      )}
+
+      {/* Email */}
       <input
+        {...register('email')}
         placeholder="Email"
-        value={form.email}
-        onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
-      <select
-        value={form.country_id}
-        onChange={(e) =>
-          setForm({ ...form, country_id: e.target.value, state_id: '' })
-        }
-      >
+      {errors.email && (
+        <p className="text-red-500 text-sm">{errors.email.message}</p>
+      )}
+
+      {/* Country */}
+      <select {...register('country_id')}>
         <option value="">Select Country</option>
-        {countries.map((c: any) => (
+        {countries.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
           </option>
         ))}
       </select>
-      <select
-        value={form.state_id}
-        onChange={(e) => setForm({ ...form, state_id: e.target.value })}
-      >
+      {errors.country_id && (
+        <p className="text-red-500 text-sm">{errors.country_id.message}</p>
+      )}
+
+      {/* State */}
+      <select {...register('state_id')}>
         <option value="">Select State</option>
-        {states.map((s: any) => (
+        {states.map((s) => (
           <option key={s.id} value={s.id}>
             {s.name}
           </option>
         ))}
       </select>
-      <button type="submit">{form.id ? 'Update' : 'Add'}</button>
-      {form.id && <button onClick={resetForm}>Cancel</button>}
+      {errors.state_id && (
+        <p className="text-red-500 text-sm">{errors.state_id.message}</p>
+      )}
+
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Saving...' : 'Save'}
+      </button>
     </form>
-  )
+  );
 }

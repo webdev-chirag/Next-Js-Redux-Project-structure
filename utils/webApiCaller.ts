@@ -28,8 +28,19 @@ export async function webApiCaller(
       headers,
       data: body,
     })
+
     return response.data
   } catch (error: any) {
-    throw error?.response?.data || error.message
+    const status = error?.response?.status || 500
+    const message =
+      error?.response?.data?.message || 'Something went wrong, please try again.'
+    const errors = error?.response?.data?.errors || null // Laravel-style validation errors
+
+    // ✅ Always throw the same shape
+    throw {
+      status,
+      message,
+      errors,
+    }
   }
 }

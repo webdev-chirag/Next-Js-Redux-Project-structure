@@ -1,33 +1,48 @@
 // features/user/pages/UserCreatePage.tsx
-'use client'
+"use client";
 
-import { useAppDispatch } from '@/redux/hooks'
-import { addUser } from '@/features/user/userSlice'
-import { useUserForm } from '@/features/user/hooks/useUserForm'
-import UserForm from '@/features/user/components/UserForm'
+import { useAppDispatch } from "@/redux/hooks";
+import { addUser } from "@/features/user/userSlice";
+import { useUserForm } from "@/features/user/hooks/useUserForm";
+import UserForm from "@/features/user/components/UserForm";
+import { handleFormSubmit } from "@/utils/handleFormSubmit";
 
 export default function UserCreatePage() {
-  const dispatch = useAppDispatch()
-  const { form, setForm, countries, states, resetForm } = useUserForm()
+  const dispatch = useAppDispatch();
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
-    await dispatch(addUser(form))
-    resetForm()
-    // Optionally redirect
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    countries,
+    states,
+    reset,
+    setError,
+  } = useUserForm();
+
+  const onSubmit = (data: any) =>
+    handleFormSubmit({
+      action: addUser,
+      payload: data,
+      dispatch,
+      setError,
+      onSuccess: () => {
+        reset();
+        // Optional redirect
+      },
+    });
 
   return (
     <div>
       <h2>Create User</h2>
       <UserForm
-        form={form}
-        setForm={setForm}
+        register={register}
+        errors={errors}
         countries={countries}
         states={states}
-        handleSubmit={handleSubmit}
-        resetForm={resetForm}
+        onSubmit={handleSubmit(onSubmit)}
+        isSubmitting={isSubmitting}
       />
     </div>
-  )
+  );
 }

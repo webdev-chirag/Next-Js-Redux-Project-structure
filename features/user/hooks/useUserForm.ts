@@ -1,42 +1,56 @@
 // features/user/hooks/useUserForm.ts
-import { useState, useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import {
-  fetchCountries,
-  fetchStates,
-} from '@/features/location/locationSlice'
-import { RootState } from '@/redux/store'; // Path to store.ts
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { fetchCountries, fetchStates } from '@/features/location/locationSlice';
+import { RootState } from '@/redux/store';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { userSchema } from '@/validation/userSchema';
 
-export const useUserForm = (initialData = null) => {
-  const dispatch = useAppDispatch()
+export type UserFormValues = yup.InferType<typeof userSchema>;
+
+export const useUserForm = (initialData: Partial<UserFormValues> | null = null) => {
+  const dispatch = useAppDispatch();
   const countries = useAppSelector((state: RootState) => state.location.countries);
   const states = useAppSelector((state: RootState) => state.location.states);
-  
-  const [form, setForm] = useState({
-    id: null,
-    name: '',
-    email: '',
-    country_id: '',
-    state_id: '',
-  })
 
-  useEffect(() => {
-    dispatch(fetchCountries())
-  }, [])
+  // ✅ 2. Setup react-hook-form with Yup validation
+  const formMethods = useForm<UserFormValues>({
+    resolver: yupResolver(userSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      country_id: '',
+      state_id: '',
+      ...initialData,
+    },
+  });
 
+  const { watch, reset, setError } = formMethods;
+
+  // ✅ 3. Fetch countries on mount
   useEffect(() => {
-    if (form.country_id) {
-      dispatch(fetchStates(Number(form.country_id)))
+    dispatch(fetchCountries());
+  }, []);
+
+  // ✅ 4. Fetch states when country changes
+  useEffect(() => {
+    const countryId = watch('country_id');
+    if (countryId) {
+      dispatch(fetchStates(Number(countryId)));
     }
-  }, [form.country_id])
+  }, [watch('country_id')]);
 
+  // ✅ 5. Reset form if initialData changes (for edit mode)
   useEffect(() => {
-    if (initialData) setForm(initialData)
-  }, [initialData])
+    if (initialData) reset(initialData);
+  }, [initialData]);
 
-  const resetForm = () => {
-    setForm({ id: null, name: '', email: '', country_id: '', state_id: '' })
-  }
-
-  return { form, setForm, countries, states, resetForm }
-}
+  return {
+    ...formMethods, // includes register, handleSubmit, formState, etc.
+    countries,
+    states,
+    setError,
+  };
+};
